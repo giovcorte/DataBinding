@@ -21,7 +21,7 @@ plugins {
 
 allprojects {
     group = "com.databinding"
-    version = "1.0"
+    version = "1.0.2"
 
     repositories {
         maven { url 'https://jitpack.io' }

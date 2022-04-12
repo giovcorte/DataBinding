@@ -34,8 +34,13 @@ class IViewFactoryClassWriter(filer: Filer, messager: Messager) : AbstractClassW
             out.println("import com.databinding.databinding.IViewFactory")
             out.println("import com.databinding.databinding.IView")
             out.println("import com.databinding.databinding.IData")
+
+            val imports: MutableSet<String> = HashSet()
             for (data in objects.values) {
-                out.println("import ${data.viewClassName}")
+                if (data.viewClassName !in imports) {
+                    out.println("import ${data.viewClassName}")
+                    imports.add(data.viewClassName)
+                }
             }
             out.println()
             out.print("class ViewFactory: IViewFactory { \n\n")

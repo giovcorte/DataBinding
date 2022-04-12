@@ -1,6 +1,7 @@
 package com.databinding.compiler.writer
 
 import com.databinding.compiler.AbstractClassWriter
+import com.databinding.compiler.Utils
 import com.databinding.compiler.Utils.codeString
 import com.databinding.compiler.Utils.combineClassName
 import com.databinding.compiler.Utils.simpleName
@@ -35,9 +36,10 @@ class AdapterDataBindingClassWriter(filer: Filer, messager: Messager) : Abstract
             out.println("import android.content.Context")
             out.println("import com.databinding.databinding.IAdapterDataBinding")
             out.println("import com.databinding.databinding.DataBinding")
-            for (`object` in bindableObjects.values) {
-                out.println("import " + `object`.viewClassName)
-                out.println("import " + `object`.className)
+            val imports: MutableSet<String> = HashSet()
+            for (bindableData in bindableObjects.values) {
+                writeImport(bindableData.viewClassName, imports, out)
+                writeImport(bindableData.className, imports, out)
             }
             out.println()
             out.print("class AdapterDataBinding: IAdapterDataBinding { \n\n")
@@ -70,6 +72,13 @@ class AdapterDataBindingClassWriter(filer: Filer, messager: Messager) : Abstract
             out.print("    return view.name() + data.name() \n")
             out.print("  } \n\n")
             out.println("}")
+        }
+    }
+
+    private fun writeImport(import: String, imports: MutableSet<String>, out: PrintWriter) {
+        if (import !in imports && Utils.canImport(import)) {
+            out.println("import $import")
+            imports.add(import)
         }
     }
 }
