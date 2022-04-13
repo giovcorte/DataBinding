@@ -63,6 +63,7 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
      */
     fun addItems(newItems: List<IData>?) {
         items.addAll(newItems!!)
+        notifyItemRangeInserted(0, items.size)
     }
 
     /**
@@ -71,8 +72,10 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
      *
      * @param data new IData object.
      */
+    @Synchronized
     fun addItem(data: IData) {
         items.add(data)
+        notifyItemInserted(items.size)
     }
 
     /**
@@ -154,6 +157,8 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
      * Clears all the children and stops the tasks in each binder.
      */
     fun clearItems() {
+        val oldSize = items.size
         items.clear()
+        notifyItemRangeRemoved(0, oldSize)
     }
 }

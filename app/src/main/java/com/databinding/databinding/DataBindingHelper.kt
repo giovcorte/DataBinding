@@ -2,6 +2,7 @@ package com.databinding.databinding
 
 import android.view.View
 
+@Suppress("unused")
 object DataBindingHelper {
 
     @JvmStatic

@@ -63,14 +63,14 @@ class DataBindingClassWriter(filer: Filer, messager: Messager) : AbstractClassWr
 
             // instance variables
             for (dependency in dependenciesImports) {
-                out.print("  val ${lower(simpleName(dependency))}: ${simpleName(dependency)}")
+                out.print("  val ${lower(simpleName(dependency))}: ${simpleName(dependency)} \n")
             }
             out.print("\n\n")
 
             // constructor
             out.print("  constructor(${typedParams(ArrayList(dependenciesImports))}) { \n")
             for (dependency in dependenciesImports) {
-                out.print("    this.${lower(simpleName(dependency))}  = ${lower(simpleName(dependency))} \n")
+                out.print("    this.${lower(simpleName(dependency))} = ${lower(simpleName(dependency))} \n")
             }
             out.print("  } \n\n")
 
