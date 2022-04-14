@@ -63,7 +63,7 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
      */
     fun addItems(newItems: List<IData>?) {
         items.addAll(newItems!!)
-        notifyItemRangeInserted(0, items.size)
+        //notifyItemRangeInserted(0, items.size)
     }
 
     /**
@@ -75,7 +75,7 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
     @Synchronized
     fun addItem(data: IData) {
         items.add(data)
-        notifyItemInserted(items.size)
+        //notifyItemInserted(items.size)
     }
 
     /**

@@ -65,13 +65,14 @@ class DataBindingClassWriter(filer: Filer, messager: Messager) : AbstractClassWr
             for (dependency in dependenciesImports) {
                 out.print("  val ${lower(simpleName(dependency))}: ${simpleName(dependency)} \n")
             }
-            out.print("\n\n")
+            out.print("\n  public companion object { public lateinit var instance: DataBinding } \n\n")
 
             // constructor
             out.print("  constructor(${typedParams(ArrayList(dependenciesImports))}) { \n")
             for (dependency in dependenciesImports) {
                 out.print("    this.${lower(simpleName(dependency))} = ${lower(simpleName(dependency))} \n")
             }
+            out.print("    instance = this \n")
             out.print("  } \n\n")
 
             // bind overloaded methods

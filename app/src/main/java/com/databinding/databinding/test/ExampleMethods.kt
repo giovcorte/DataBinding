@@ -29,6 +29,7 @@ object ExampleMethods {
     @JvmStatic
     @BindingMethod
     fun bindImageView(@View view: ImageView?, @Data url: String?) {
+
     }
 
     @JvmStatic
