@@ -10,7 +10,7 @@ import com.databinding.databinding.IViewFactory
  * The only adapter needed for bind any ViewConfiguration object into an Android RecyclerView.
  */
 @Suppress("unused")
-class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
+open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
 
     private val dataBinding: IAdapterDataBinding
     private val viewFactory: IViewFactory
