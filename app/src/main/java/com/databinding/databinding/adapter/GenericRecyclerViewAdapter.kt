@@ -123,7 +123,7 @@ class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
      *
      * @return the current children displayed.
      */
-    fun getItems(): List<IData> {
+    fun getItems(): MutableList<IData> {
         return items
     }
 
