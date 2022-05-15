@@ -28,19 +28,18 @@ class DataBindingClassWriter(filer: Filer, messager: Messager) : AbstractClassWr
 
         PrintWriter(filerSourceFile.openWriter()).use { out ->
             // basic imports
-            out.print("package ")
-            out.print(packageName)
-            out.println()
+            out.print("package $packageName")
             out.println("import com.databinding.databinding.DataBindingHelper")
             out.println("import android.view.View")
 
             // user imports
             val imports: MutableSet<String> = HashSet()
             val dependenciesImports: MutableSet<String> = HashSet()
+
             for (method in methods.values) {
-                writeImport(method.enclosingClass, imports, out)
-                writeImport(method.dataClass, imports, out)
-                writeImport(method.viewClass, imports, out)
+                writeImport(method.enclosingClassName, imports, out)
+                writeImport(method.dataClassName, imports, out)
+                writeImport(method.viewClassName, imports, out)
 
                 for (dependency in method.dependencies) {
                     writeImport(dependency, imports, out)
@@ -77,50 +76,55 @@ class DataBindingClassWriter(filer: Filer, messager: Messager) : AbstractClassWr
 
             // bind overloaded methods
             for (viewModelPair in methods.keys) {
-                val method = methods[viewModelPair]
-                val simpleViewClassName = simpleName(method!!.viewClass)
-                val simpleModelClass = simpleName(method.dataClass)
-                val enclosingClass = method.enclosingClass
+                val method = methods[viewModelPair]!!
+
+                val simpleViewClassName = simpleName(method.viewClassName)
+                val simpleModelClassName = simpleName(method.dataClassName)
+                val enclosingClassName = method.enclosingClassName
                 val methodName = method.methodName
-                out.print("  public fun bind(view: $simpleViewClassName?, data: $simpleModelClass?) { \n")
+
+                // binding method start
+                out.print("  public fun bind(view: $simpleViewClassName?, data: $simpleModelClassName?) { \n")
                 if (method.dependencies.isNotEmpty()) { // method with dependencies
-                    out.print("    ${simpleName(enclosingClass)}.$methodName(view, data, ${params(method.dependencies)}) \n")
+                    out.print("    ${simpleName(enclosingClassName)}.$methodName(view, data, ${params(method.dependencies)}) \n")
                 } else { // method with only view and data
-                    out.print("    ${simpleName(enclosingClass)}.$methodName(view, data) \n")
+                    out.print("    ${simpleName(enclosingClassName)}.$methodName(view, data) \n")
                 }
 
                 // this is a custom view
-                if (views.containsKey(method.viewClass)) {
+                if (views.containsKey(method.viewClassName)) {
                     // main view action for this data class
-                    val actionsMap: Map<String, BindableActionImpl> =
-                        views[method.viewClass]!!.actions
-                    if (actionsMap.containsKey(simpleModelClass)) {
-                        val action = actionsMap[simpleModelClass]
+                    val bindableView = views[method.viewClassName]!!
+                    val actionsMap: Map<String, BindableActionImpl> = bindableView.actions
+
+                    if (actionsMap.containsKey(simpleModelClassName)) {
+                        val action = actionsMap[simpleModelClassName]
                         out.print("    DataBindingHelper.bindAction(view, data?.${action!!.path}) \n")
                     }
 
                     // view field binding
-                    val viewFieldsMap: Map<String, List<BindableViewFieldImpl>> =
-                        views[method.viewClass]!!.bindableViewFields
-                    if (viewFieldsMap.containsKey(simpleModelClass)) {
-                        val fields = viewFieldsMap[simpleModelClass]!!
+                    val viewFields: Map<String, List<BindableViewFieldImpl>> = bindableView.bindableViewFields
+
+                    if (viewFields.containsKey(simpleModelClassName)) {
+                        val fields = viewFields[simpleModelClassName]!!
+
                         for (field in fields) {
                             val simpleFieldViewClass = simpleName(field.fieldViewClassName)
                             val simpleFieldDataClass = field.fieldObjectClassName
                             val key = combineClassName(simpleFieldViewClass, simpleFieldDataClass)
+
                             if (methods.containsKey(key)) {
-                                out.print(
-                                    "    bind(view?.${field.fieldName} , data?.${dataPath(field.objectPath)}) \n"
-                                )
+                                out.print("    bind(view?.${field.fieldName} , data?.${dataPath(field.objectPath)}) \n")
                             }
                         }
                     }
 
                     // view field actions
-                    val actionFieldsMap: Map<String, List<BindableActionFieldImpl>> =
-                        views[method.viewClass]!!.bindableActionFields
-                    if (actionFieldsMap.containsKey(simpleModelClass)) {
-                        val fields = actionFieldsMap[simpleModelClass]!!
+                    val actionFields: Map<String, List<BindableActionFieldImpl>> = bindableView.bindableActionFields
+
+                    if (actionFields.containsKey(simpleModelClassName)) {
+                        val fields = actionFields[simpleModelClassName]!!
+
                         for (field in fields) {
                             out.print(
                                 "     DataBindingHelper.bindAction(view?.${field.fieldName} , data?.${dataPath(field.objectPath)}) \n"

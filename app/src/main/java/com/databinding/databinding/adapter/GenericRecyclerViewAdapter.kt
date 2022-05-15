@@ -10,11 +10,11 @@ import com.databinding.databinding.IViewFactory
  * The only adapter needed for bind any ViewConfiguration object into an Android RecyclerView.
  */
 @Suppress("unused")
-open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> {
+open class GenericRecyclerViewAdapter<T : IData> : RecyclerView.Adapter<GenericViewHolder> {
 
     private val dataBinding: IAdapterDataBinding
     private val viewFactory: IViewFactory
-    private val items: MutableList<IData>
+    private val items: MutableList<T>
 
     /**
      * Constructor.
@@ -25,7 +25,7 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
     constructor(
         dataBinding: IAdapterDataBinding,
         viewFactory: IViewFactory,
-        items: MutableList<IData>
+        items: MutableList<T>
     ) {
         this.dataBinding = dataBinding
         this.viewFactory = viewFactory
@@ -61,9 +61,8 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
      *
      * @param newItems Generic list of IData objects
      */
-    fun addItems(newItems: List<IData>?) {
+    fun addItems(newItems: List<T>?) {
         items.addAll(newItems!!)
-        //notifyItemRangeInserted(0, items.size)
     }
 
     /**
@@ -73,9 +72,8 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
      * @param data new IData object.
      */
     @Synchronized
-    fun addItem(data: IData) {
+    fun addItem(data: T) {
         items.add(data)
-        //notifyItemInserted(items.size)
     }
 
     /**
@@ -87,7 +85,6 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
     fun removeItem(position: Int) {
         if (position >= 0 && position < items.size) {
             items.removeAt(position)
-            notifyItemRemoved(position)
         }
     }
 
@@ -123,7 +120,7 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
      *
      * @return the current children displayed.
      */
-    fun getItems(): MutableList<IData> {
+    fun getItems(): MutableList<T> {
         return items
     }
 
@@ -133,7 +130,7 @@ open class GenericRecyclerViewAdapter : RecyclerView.Adapter<GenericViewHolder> 
      * @param index integer representing the position of the desired element.
      * @return the IData at the given index.
      */
-    fun getItem(index: Int): IData {
+    fun getItem(index: Int): T {
         return items[index]
     }
 
