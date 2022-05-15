@@ -28,7 +28,7 @@ class DataBindingClassWriter(filer: Filer, messager: Messager) : AbstractClassWr
 
         PrintWriter(filerSourceFile.openWriter()).use { out ->
             // basic imports
-            out.print("package $packageName")
+            out.print("package $packageName \n\n")
             out.println("import com.databinding.databinding.DataBindingHelper")
             out.println("import android.view.View")
 
